@@ -4,6 +4,8 @@ import { port } from './environment'
 
 import _http from 'http'
 
+import router from '../routes/weather'
+
 const app = express()
 
 app.get(`/health-check`, (req, res) => res.status(200).json(`OK`))
@@ -13,6 +15,9 @@ app.use(express.json())
 
 // app seguro
 app.use(helmet())
+
+// Adiciona a rota
+app.use('/weather', router)
 
 // pega 404 e encaminhar para manipulador de erro
 app.use((req, res, next) => {
