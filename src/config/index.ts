@@ -1,10 +1,13 @@
 import express, { NextFunction, Request, Response } from 'express'
 import helmet from 'helmet'
+import cors from 'cors'
+
 import { port } from './environment'
 
 import _http from 'http'
 
-import router from '../routes/weather'
+import weather_router from '../routes/weather'
+import city_router from '../routes/city'
 
 const app = express()
 
@@ -16,16 +19,21 @@ app.use(express.json())
 // app seguro
 app.use(helmet())
 
-// Adiciona a rota
-app.use('/weather', router)
+// CORS - Cross Origin Resource Sharing
+app.use(cors());
 
-// pega 404 e encaminhar para manipulador de erro
+// Adicionando as rotas
+app.use('/weather-api/weather', weather_router)
+app.use('/weather-api/city', city_router)
+
+
+// pega 404 e encaminha para manipulador de erro
 app.use((req, res, next) => {
   const err = { message: 'API not found', status: 404 }
   return next(err)
 })
 
-// manipulador de erros, envie o stacktrace apenas durante o desenvolvimento
+// manipulador de erros
 app.use((err: any, req: Request, res: Response) => {
   const result: { message: string; error?: any; code?: number } = { message: err.message || err }
 
